@@ -4104,9 +4104,16 @@ def topbar(periode: str | None):
 
 def layar_muat():
     """Layar muat penuh selama Streamlit menjalankan skrip (atribut data-test-script-state="running" pada stApp).
-    Muncul setelah 0,6 detik, jadi interaksi cepat tidak membuat layar berkedip."""
-    logo = (f'<img src="data:image/png;base64,{base64.b64encode(BERKAS_LOGO.read_bytes()).decode()}">'
-            if BERKAS_LOGO.exists() else "")
+    Muncul setelah 0,6 detik, jadi interaksi cepat tidak membuat layar berkedip. Ikon api: Material Icons
+    "local_fire_department" (Google, lisensi Apache 2.0)."""
+    api = ('<svg class="api" viewBox="0 0 24 24"><defs><linearGradient id="gradien-api" x1="0" y1="0" x2="0" y2="1">'
+           '<stop offset="0" stop-color="#ffc83d"/><stop offset=".55" stop-color="#ff7a1a"/>'
+           '<stop offset="1" stop-color="#e5311d"/></linearGradient></defs><path fill="url(#gradien-api)" '
+           'd="M19.48 12.35c-1.57-4.08-7.16-4.3-5.81-10.23.1-.44-.37-.78-.75-.55C9.29 3.71 6.68 8 8.87 13.62'
+           'c.18.46-.36.89-.75.59-1.81-1.37-2-3.34-1.84-4.75.06-.52-.62-.77-.91-.34C4.69 10.16 4 11.84 4 14.37'
+           'c.38 5.6 5.11 7.32 6.81 7.54 2.43.31 5.06-.14 6.95-1.87 2.08-1.93 2.84-5.01 1.72-7.69zm-9.28 5.03'
+           'c1.44-.35 2.18-1.39 2.38-2.31.33-1.43-.96-2.83-.09-5.09.33 1.87 3.27 3.04 3.27 5.08.08 2.53-2.66 4.7-5.56 2.32z"/>'
+           '</svg>')
     st.markdown(f"""
     <style>
     .layar-muat {{ display: none; }}
@@ -4115,15 +4122,20 @@ def layar_muat():
         display: flex; position: fixed; inset: 0; z-index: 999999; flex-direction: column; align-items: center;
         justify-content: center; gap: 18px; background: rgba(7, 15, 28, .82); backdrop-filter: blur(3px);
         opacity: 0; animation: muat-masuk .25s ease .6s forwards; }}
-    .layar-muat img {{ height: 74px; }}
-    .layar-muat .putar {{ width: 54px; height: 54px; border-radius: 50%; border: 4px solid rgba(0, 212, 255, .18);
-                          border-top-color: {C['accent']}; animation: muat-putar .9s linear infinite; }}
+    .layar-muat .lingkar {{ position: relative; width: 104px; height: 104px; }}
+    .layar-muat .putar {{ position: absolute; inset: 0; border-radius: 50%; border: 4px solid rgba(255, 122, 26, .15);
+                          border-top-color: #ff7a1a; border-right-color: #ffc83d; animation: muat-putar 1s linear infinite; }}
+    .layar-muat .api {{ position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -29px 0 0 -27px;
+                        filter: drop-shadow(0 0 12px rgba(255, 122, 26, .55));
+                        animation: muat-nyala 1.1s ease-in-out infinite alternate; transform-origin: 50% 90%; }}
+    @keyframes muat-nyala {{ from {{ transform: scale(.94) rotate(-2deg); opacity: .85; }}
+                             to {{ transform: scale(1.06) rotate(2deg); opacity: 1; }} }}
     .layar-muat .judul {{ font-size: 1.15rem; font-weight: 700; color: {C['text']}; letter-spacing: 1px; }}
     .layar-muat .ket {{ font-size: .85rem; color: {C['text_muted']}; text-align: center; padding: 0 20px; }}
     @keyframes muat-masuk {{ to {{ opacity: 1; }} }}
     @keyframes muat-putar {{ to {{ transform: rotate(360deg); }} }}
     </style>
-    <div class="layar-muat">{logo}<div class="putar"></div>
+    <div class="layar-muat"><div class="lingkar"><div class="putar"></div>{api}</div>
     <div class="judul">Memuat SPARKS</div>
     <div class="ket">Membaca data satelit dan menghitung peringatan kebakaran. Pertama kali dibuka bisa sampai 30 detik.</div>
     </div>""", unsafe_allow_html=True)
