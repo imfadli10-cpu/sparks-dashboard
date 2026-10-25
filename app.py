@@ -4102,6 +4102,33 @@ def topbar(periode: str | None):
     """, unsafe_allow_html=True)
 
 
+def layar_muat():
+    """Layar muat penuh selama Streamlit menjalankan skrip (atribut data-test-script-state="running" pada stApp).
+    Muncul setelah 0,6 detik, jadi interaksi cepat tidak membuat layar berkedip."""
+    logo = (f'<img src="data:image/png;base64,{base64.b64encode(BERKAS_LOGO.read_bytes()).decode()}">'
+            if BERKAS_LOGO.exists() else "")
+    st.markdown(f"""
+    <style>
+    .layar-muat {{ display: none; }}
+    .stApp[data-test-script-state="running"] .layar-muat,
+    .stApp[data-test-script-state="rerunRequested"] .layar-muat {{
+        display: flex; position: fixed; inset: 0; z-index: 999999; flex-direction: column; align-items: center;
+        justify-content: center; gap: 18px; background: rgba(7, 15, 28, .82); backdrop-filter: blur(3px);
+        opacity: 0; animation: muat-masuk .25s ease .6s forwards; }}
+    .layar-muat img {{ height: 74px; }}
+    .layar-muat .putar {{ width: 54px; height: 54px; border-radius: 50%; border: 4px solid rgba(0, 212, 255, .18);
+                          border-top-color: {C['accent']}; animation: muat-putar .9s linear infinite; }}
+    .layar-muat .judul {{ font-size: 1.15rem; font-weight: 700; color: {C['text']}; letter-spacing: 1px; }}
+    .layar-muat .ket {{ font-size: .85rem; color: {C['text_muted']}; text-align: center; padding: 0 20px; }}
+    @keyframes muat-masuk {{ to {{ opacity: 1; }} }}
+    @keyframes muat-putar {{ to {{ transform: rotate(360deg); }} }}
+    </style>
+    <div class="layar-muat">{logo}<div class="putar"></div>
+    <div class="judul">Memuat SPARKS</div>
+    <div class="ket">Membaca data satelit dan menghitung peringatan kebakaran. Pertama kali dibuka bisa sampai 30 detik.</div>
+    </div>""", unsafe_allow_html=True)
+
+
 def footer():
     st.markdown(f'<div class="footer"><b>{APP_NAME} {APP_VERSION}</b> · UEC LOGIKA UI 2026 · '
                 'data: NASA SMAP L4 (muka air gambut, terlambat ±3–5 hari), NASA FIRMS (titik api, ±1–2 hari), '
@@ -4120,6 +4147,7 @@ def main():
                        page_icon=str(BERKAS_LOGO) if BERKAS_LOGO.exists() else None, layout="wide", initial_sidebar_state="collapsed")
     inject_css()
     css_ringkas()
+    layar_muat()
     if not ada_data():
         topbar(None)
         f = bar_filter(None, None)
